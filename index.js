@@ -4,7 +4,7 @@ const cors = require("cors");
 const socketIO = require("socket.io");
 
 const app=express();
-const port= process.env.PORT ;
+const port=4500 || process.env.PORT ;
 
 
 const users=[{}];
@@ -24,9 +24,11 @@ io.on("connection",(socket)=>{
     socket.on('joined',({user})=>{
           users[socket.id]=user;
           console.log(`${user} has joined `);
-          socket.broadcast.emit('userJoined',{user:"Admin",message:` ${users[socket.id]} has joined`});
+          
           socket.emit('welcome',{user:"Admin",message:`Welcome to the chat,${users[socket.id]} `})
     })
+
+    socket.broadcast.emit('userJoined',{message:` ${users[socket.id]} has joined`});
 
     socket.on('message',({message,id})=>{
         io.emit('sendMessage',{user:users[id],message,id});
@@ -40,5 +42,5 @@ io.on("connection",(socket)=>{
 
 
 server.listen(port,()=>{
-    console.log(`Working`);
+    console.log(`Working ${port}`);
 })
